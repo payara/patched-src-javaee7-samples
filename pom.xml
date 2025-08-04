@@ -572,8 +572,8 @@
                                 <requireProperty>
                                     <property>payara.version</property>
                                     <message>"Payara version must be specified."</message>
-                                    <regex>^5.*</regex>
-                                    <regexMessage>"This profile is only supported on Payara 5"</regexMessage>
+                                    <regex>^7.*</regex>
+                                    <regexMessage>"This profile is only supported on Payara 7"</regexMessage>
                                 </requireProperty>
                             </rules>
                         </configuration>
@@ -730,8 +730,8 @@
                                 <requireProperty>
                                     <property>payara.version</property>
                                     <message>"Payara version must be specified."</message>
-                                    <regex>^5.*</regex>
-                                    <regexMessage>"This profile is only supported on Payara 5"</regexMessage>
+                                    <regex>^7.*</regex>
+                                    <regexMessage>"This profile is only supported on Payara 7"</regexMessage>
                                 </requireProperty>
                             </rules>
                         </configuration>
@@ -802,8 +802,8 @@
                                 <requireProperty>
                                     <property>payara.version</property>
                                     <message>"Payara version must be specified."</message>
-                                    <regex>^5.*</regex>
-                                    <regexMessage>"This profile is only supported on Payara 5"</regexMessage>
+                                    <regex>^7.*</regex>
+                                    <regexMessage>"This profile is only supported on Payara 7"</regexMessage>
                                 </requireProperty>
                             </rules>
                         </configuration>
