@@ -647,6 +647,11 @@
             <id>payara-server-remote</id>
 
             <dependencies>
+                <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
+                <dependency>
+                    <groupId>fish.payara.arquillian</groupId>
+                    <artifactId>payara-client-ee9</artifactId>
+                </dependency>
 
                 <!-- The actual Arquillian connector -->
                 <dependency>
