@@ -479,6 +479,7 @@
                                 <payara.home>${session.executionRootDirectory}/target/payara7</payara.home>
                                 <arquillian.launch>payara7</arquillian.launch>
                                 <payara_domain>${payara_domain}</payara_domain>
+                                <javaEEServer>payara-remote</javaEEServer>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
