@@ -8,9 +8,9 @@ import java.net.URL;
 
 //import javax.xml.registry.infomodel.User;
 
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
