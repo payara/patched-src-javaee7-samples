@@ -33,21 +33,19 @@ public class AjaxScriptTest {
 
     private HtmlPage page;
 
-    @Before
-    public void setup() throws IOException {
-        try (WebClient webClient = new WebClient()) {
-            // Make sure to wait for AJAX requests in the foreground
-            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-            page = webClient.getPage(base + "/faces/index.xhtml");
-        }
-    }
-
     @Test
     public void when_ajax_button_clicked_expect_no_errors() throws IOException, InterruptedException {
-        // Click the link
-        page.getElementById("form:link").click();
-        // Check that the AJAX request was successful
-        assertEquals("Successful AJAX request", page.getElementById("message").getTextContent());
+        try (WebClient webClient = new WebClient()) {
+            webClient.getOptions().setJavaScriptEnabled(true);
+            // Make sure to wait for AJAX requests in the foreground
+            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            page = webClient.getPage(base + "/faces/index.xhtml");
+            // Click the link
+            page.getElementById("form:link").click();
+            // Check that the AJAX request was successful
+            assertEquals("Successful AJAX request", page.getElementById("message").getTextContent());
+        }
     }
 
     @Deployment(testable = false)
