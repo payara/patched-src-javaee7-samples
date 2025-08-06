@@ -52,10 +52,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.omnifaces.utils.security.Certificates;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import org.htmlunit.HttpMethod;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 
 /**
  * @author Arjan Tijms
@@ -249,7 +249,7 @@ public class SecureServletTest {
         //            at org.apache.http.impl.conn.CPoolEntry.close(CPoolEntry.java:96)
         //            at org.apache.http.pool.AbstractConnPool.shutdown(AbstractConnPool.java:148)
         //            at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.shutdown(PoolingHttpClientConnectionManager.java:411)
-        //            at com.gargoylesoftware.htmlunit.HttpWebConnection.close(HttpWebConnection.java:1011)
+        //            at org.htmlunit.HttpWebConnection.close(HttpWebConnection.java:1011)
         //
         // Visible when -Dssl.debug is used
         //
@@ -337,11 +337,11 @@ public class SecureServletTest {
         System.setProperty("jakarta.net.debug", "ssl:handshake");
         
         System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "debug");
-        Logger.getLogger("com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
+        Logger.getLogger("org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
         Logger.getLogger("org.apache.http.conn.ssl.SSLConnectionSocketFactory").setLevel(FINEST);
         Log logger = LogFactory.getLog(org.apache.http.conn.ssl.SSLConnectionSocketFactory.class);
         ((Jdk14Logger) logger).getLogger().setLevel(FINEST);
-        logger = LogFactory.getLog(com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory.class);
+        logger = LogFactory.getLog(org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory.class);
         ((Jdk14Logger) logger).getLogger().setLevel(FINEST);
         Logger.getGlobal().getParent().getHandlers()[0].setLevel(FINEST);
     }
