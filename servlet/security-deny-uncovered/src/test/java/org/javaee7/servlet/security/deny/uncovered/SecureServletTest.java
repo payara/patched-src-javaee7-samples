@@ -55,8 +55,8 @@ public class SecureServletTest {
 
     @Before
     public void setup() {
-        correctCreds.addCredentials("u1", "p1");
-        incorrectCreds.addCredentials("random", "random");
+        correctCreds.addCredentials("u1", "p1".toCharArray());
+        incorrectCreds.addCredentials("random", "random".toCharArray());
         webClient = new WebClient();
     }
     
