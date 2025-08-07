@@ -62,7 +62,7 @@
         <tomee.version>7.0.2</tomee.version>
         <tomcat.version>9.0.4</tomcat.version>
 
-        <payara.arquillian.version>4.0.alpha2</payara.arquillian.version>
+        <payara.arquillian.version>4.0.alpha4</payara.arquillian.version>
         <argLine>--add-opens=java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED -D...</argLine>
     </properties>
 
@@ -427,8 +427,8 @@
                  <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee9</artifactId>
-                    <version>3.1</version>
+                    <artifactId>payara-client-ee11</artifactId>
+                    <version>${payara.arquillian.version}</version>
                 </dependency>
 
                 <!-- The actual Arquillian connector -->
@@ -509,8 +509,8 @@
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee9</artifactId>
-                    <version>3.1</version>
+                    <artifactId>payara-client-ee11</artifactId>
+                    <version>${payara.arquillian.version}</version>
                 </dependency>
 
                 <!-- The Arquillian connector -->
@@ -589,7 +589,8 @@
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee9</artifactId>
+                    <artifactId>payara-client-ee11</artifactId>
+                    <version>${payara.arquillian.version}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>org.glassfish.grizzly</groupId>
@@ -632,6 +633,12 @@
             <id>payara-server-remote</id>
 
             <dependencies>
+                <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
+                <dependency>
+                    <groupId>fish.payara.arquillian</groupId>
+                    <artifactId>payara-client-ee11</artifactId>
+                    <version>${payara.arquillian.version}</version>
+                </dependency>
 
                 <!-- The actual Arquillian connector -->
                 <dependency>
@@ -694,7 +701,8 @@
                 be on the classpath -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee9</artifactId>
+                    <artifactId>payara-client-ee11</artifactId>
+                    <version>${payara.arquillian.version}</version>
                 </dependency>
 
                 <!-- The actual Arquillian connector -->
