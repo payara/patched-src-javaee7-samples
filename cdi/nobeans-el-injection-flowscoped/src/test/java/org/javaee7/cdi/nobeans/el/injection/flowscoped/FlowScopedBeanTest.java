@@ -1,7 +1,7 @@
 package org.javaee7.cdi.nobeans.el.injection.flowscoped;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import java.io.File;
 import java.net.URL;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -39,6 +39,6 @@ public class FlowScopedBeanTest {
         WebClient webClient = new WebClient();
         HtmlPage page = webClient.getPage(base + "/faces/myflow/index.xhtml");
         assertNotNull(page);
-        assert (page.asText().contains("Hello there!"));
+        assert (page.asNormalizedText().contains("Hello there!"));
     }
 }

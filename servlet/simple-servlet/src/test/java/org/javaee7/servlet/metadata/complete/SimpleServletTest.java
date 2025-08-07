@@ -1,10 +1,10 @@
 package org.javaee7.servlet.metadata.complete;
 
 import org.javaee7.servlet.simple.SimpleServlet;
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import org.htmlunit.HttpMethod;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
