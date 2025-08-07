@@ -31,8 +31,6 @@ public class AjaxScriptTest {
     @ArquillianResource
     private URL base;
 
-    private HtmlPage page;
-
     @Test
     public void when_ajax_button_clicked_expect_no_errors() throws IOException, InterruptedException {
         try (WebClient webClient = new WebClient()) {
@@ -40,7 +38,7 @@ public class AjaxScriptTest {
             // Make sure to wait for AJAX requests in the foreground
             webClient.setAjaxController(new NicelyResynchronizingAjaxController());
             webClient.getOptions().setThrowExceptionOnScriptError(false);
-            page = webClient.getPage(base + "/faces/index.xhtml");
+            HtmlPage page = webClient.getPage(base + "/faces/index.xhtml");
             // Click the link
             page.getElementById("form:link").click();
             // Check that the AJAX request was successful
