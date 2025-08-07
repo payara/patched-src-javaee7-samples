@@ -13,7 +13,6 @@
     <name>Java EE 7 Sample: websocket</name>
 
     <modules>
-        <!-- FISH-11628 Disabled temporarily
         <module>chat</module>
         <module>encoder</module>
         <module>encoder-client</module>
@@ -28,9 +27,8 @@
         <module>endpoint-programmatic-injection</module>
         <module>endpoint-security</module>
         <module>httpsession</module>
-        <module>injection</module>-->
+        <module>injection</module>
         <module>javase-client</module>
-        <!-- FISH-11628 Disabled temporarily
         <module>messagesize</module>
         <module>parameters</module>
         <module>properties</module>
@@ -43,7 +41,7 @@
         <module>websocket-client-programmatic-encoders</module>
         <module>whiteboard</module>
         <module>endpoint-singleton</module>
-        <module>websocket-vs-rest-payload</module>-->
+        <module>websocket-vs-rest-payload</module>
     </modules>
 
     <build>
