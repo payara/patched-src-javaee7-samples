@@ -13,8 +13,8 @@
 
     <modules>
         <!-- FISH-11628 Disabled temporarily
-        <module>contexts</module>
-        <module>permissions-xml</module>-->
+        <module>contexts</module>-->
+        <module>permissions-xml</module>
     </modules>
 
     <build>
