@@ -62,7 +62,7 @@ public class LoginServletTest {
 
         assertTrue(responseText.contains("isUserInRole?true"));
         assertTrue(responseText.contains("getRemoteUser?u1"));
-        assertTrue(responseText.contains("getUserPrincipal?u1"));
+        assertTrue(responseText.contains("getUserPrincipal?UserNameAndPassword[u1]"));
         assertTrue(responseText.contains("getAuthType?BASIC"));
     }
 }
