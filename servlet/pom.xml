@@ -31,8 +31,7 @@
         <module>security-basicauth</module>
         <module>security-digest</module>
         <module>security-form-based</module>
-        <!-- FISH-11628 Disabled temporarily
-        <module>security-programmatic</module>-->
+        <module>security-programmatic</module>
         <module>security-deny-uncovered</module>
         <module>security-annotated</module>
         <module>security-basicauth-omission</module>
