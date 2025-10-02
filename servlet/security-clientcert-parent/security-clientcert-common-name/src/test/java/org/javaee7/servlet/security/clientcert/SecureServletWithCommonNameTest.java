@@ -274,7 +274,7 @@ public class SecureServletWithCommonNameTest {
     }
     
     private static void enableSSLDebug() {
-        System.setProperty("jakarta.net.debug", "ssl:handshake");
+        System.setProperty("javax.net.debug", "ssl:handshake");
         
         System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "debug");
         Logger.getLogger("com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
