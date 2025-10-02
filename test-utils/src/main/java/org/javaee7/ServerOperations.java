@@ -98,7 +98,7 @@ public class ServerOperations {
                 logger.info("Using domain \"" + domain + "\" obtained from server. If this is not correct use -Dpayara_domain to override.");
             }
 
-            Path cacertsPath = gfHomePath.resolve("glassfish/domains/" + domain + "/config/cacerts.jks");
+            Path cacertsPath = gfHomePath.resolve("glassfish/domains/" + domain + "/config/cacerts.p12");
 
             if (!cacertsPath.toFile().exists()) {
                 logger.severe("The container trust store at " + cacertsPath.toAbsolutePath() + " does not exists");
@@ -110,7 +110,7 @@ public class ServerOperations {
 
             KeyStore keyStore = null;
             try (InputStream in = new FileInputStream(cacertsPath.toAbsolutePath().toFile())) {
-                keyStore = KeyStore.getInstance("JKS");
+                keyStore = KeyStore.getInstance("PKCS12");
                 keyStore.load(in, "changeit".toCharArray());
 
                 keyStore.setCertificateEntry("arquillianClientTestCert", clientCertificate);
