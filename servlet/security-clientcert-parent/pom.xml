@@ -13,6 +13,7 @@
 
     <modules>
         <module>security-clientcert</module>
+        <module>security-clientcert-common-name</module>
         <module>security-clientcert-jce</module>
     </modules>
 
@@ -30,20 +31,5 @@
             </plugin>
         </plugins>
     </build>
-    
-    <profiles>
-        <profile>
-            <id>5.192+</id>
-            <activation>
-                <property>
-                    <name>payara.version</name>
-                    <value>/^(5.192|[5-9]\.1(?!91)[1-9]\d{1})(?:-SNAPSHOT|\.\d*)?/</value>
-                </property>
-            </activation>
-            <modules>
-                <module>security-clientcert-common-name</module>
-            </modules>
-        </profile>
-    </profiles>
 
 </project>
