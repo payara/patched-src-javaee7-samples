@@ -49,7 +49,7 @@
             Application Server versions
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
-        <payara.version>4.1.2.181</payara.version>
+        <payara.version>5.2022.5</payara.version>
         <payara_domain>domain1</payara_domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
@@ -386,36 +386,7 @@
 
     <profiles>
 
-
         <!-- ###  PAYARA  ### -->
-        <profile>
-            <id>Payara Community</id>
-            <activation>
-                <property>
-                    <name>payara.version</name>
-                    <value>/^[5-9]\.[0-9]{4}\.[0-9]{1,2}.*/</value>
-                </property>
-            </activation>
-            <properties>
-                <payara.directory.name>payara5</payara.directory.name>
-                <payara.version.major>5</payara.version.major>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>Payara Enterprise</id>
-            <activation>
-                <property>
-                    <name>payara.version</name>
-                    <value>/^[5-9]\.[0-9]{1,2}\.[0-9].*/</value>
-                </property>
-            </activation>
-            <properties>
-                <payara.directory.name>payara5</payara.directory.name>
-                <payara.version.major>5</payara.version.major>
-            </properties>
-        </profile>
-
         <profile>
             <id>payara-server-managed</id>
 
@@ -474,8 +445,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <payara.home>${session.executionRootDirectory}/target/${payara.directory.name}</payara.home>
-                                <arquillian.launch>payara${payara.version.major}</arquillian.launch>
+                                <payara.home>${session.executionRootDirectory}/target/payara5</payara.home>
+                                <arquillian.launch>payara5</arquillian.launch>
                                 <payara_domain>${payara_domain}</payara_domain>
                             </systemPropertyVariables>
                         </configuration>
