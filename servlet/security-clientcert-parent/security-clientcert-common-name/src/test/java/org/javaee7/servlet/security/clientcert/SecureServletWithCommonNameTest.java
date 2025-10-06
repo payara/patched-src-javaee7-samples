@@ -182,7 +182,7 @@ public class SecureServletWithCommonNameTest {
 
         // Client -> Server : the key store's private keys and certificates are used to sign
         // and sent a reply to the server
-        webClient.getOptions().setSSLClientCertificate(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
+        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
         
         System.out.println("*********** SETUP DONE ***************************\n");
     }
@@ -274,7 +274,7 @@ public class SecureServletWithCommonNameTest {
     }
     
     private static void enableSSLDebug() {
-        System.setProperty("jakarta.net.debug", "ssl:handshake");
+        System.setProperty("javax.net.debug", "ssl:handshake");
         
         System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "debug");
         Logger.getLogger("org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
