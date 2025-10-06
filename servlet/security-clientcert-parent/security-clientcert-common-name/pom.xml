@@ -48,6 +48,12 @@
                 <skipServletClientCertificateCommonName>true</skipServletClientCertificateCommonName>
             </properties>
         </profile>
+        <profile>
+            <id>stable</id>
+            <properties>
+                <skipServletClientCertificateCommonName>true</skipServletClientCertificateCommonName>
+            </properties>
+        </profile>
     </profiles>
     
 </project>
