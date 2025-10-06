@@ -84,9 +84,9 @@ public class SecureServletWithCommonNameTest {
 
         // Enable to get detailed logging about the SSL handshake on the client
         // For an explanation of the TLS handshake see: https://tls.ulfheim.net
-//        if (System.getProperty("ssl.debug") != null) {
+        if (System.getProperty("ssl.debug") != null) {
             enableSSLDebug();
-//        }
+        }
         
 
         System.out.println("################################################################");
