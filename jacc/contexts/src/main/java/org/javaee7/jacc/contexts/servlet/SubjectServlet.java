@@ -1,21 +1,18 @@
 package org.javaee7.jacc.contexts.servlet;
 
-import static java.security.Policy.getPolicy;
 import static java.util.Collections.list;
 
 import java.io.IOException;
-import java.security.CodeSource;
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.security.Principal;
-import java.security.ProtectionDomain;
-import java.security.cert.Certificate;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.security.auth.Subject;
+
 import jakarta.security.jacc.PolicyContext;
 import jakarta.security.jacc.PolicyContextException;
+import jakarta.security.jacc.PolicyFactory;
 import jakarta.security.jacc.WebRoleRefPermission;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -64,13 +61,7 @@ public class SubjectServlet extends HttpServlet {
     }
 
     private PermissionCollection getPermissionCollection(Subject subject) {
-        return getPolicy().getPermissions(
-            new ProtectionDomain(
-                new CodeSource(null, (Certificate[]) null),
-                null, null,
-                subject.getPrincipals().toArray(new Principal[subject.getPrincipals().size()])
-            )
-            );
+        return PolicyFactory.getPolicyFactory().getPolicy().getPermissionCollection(subject);
     }
 
     private Set<String> filterRoles(HttpServletRequest request, PermissionCollection permissionCollection) {
@@ -87,6 +78,10 @@ public class SubjectServlet extends HttpServlet {
                     roles.add(role);
                 }
             }
+        }
+
+        if (!roles.contains("**") && request.isUserInRole("**")) {
+            roles.add("**");
         }
 
         return roles;
