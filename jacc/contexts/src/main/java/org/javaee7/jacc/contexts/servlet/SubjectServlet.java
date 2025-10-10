@@ -80,10 +80,6 @@ public class SubjectServlet extends HttpServlet {
             }
         }
 
-        if (!roles.contains("**") && request.isUserInRole("**")) {
-            roles.add("**");
-        }
-
         return roles;
     }
 
