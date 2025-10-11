@@ -49,7 +49,7 @@
             Application Server versions
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
-        <payara.version>4.1.2.181</payara.version>
+        <payara.version>5.2022.5</payara.version>
         <payara_domain>domain1</payara_domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
@@ -59,7 +59,7 @@
         <tomee.version>7.0.2</tomee.version>
         <tomcat.version>9.0.4</tomcat.version>
 
-        <payara.arquillian.version>2.4.1</payara.arquillian.version>
+        <payara.arquillian.version>2.4.6</payara.arquillian.version>
     </properties>
 
     <prerequisites>
@@ -143,7 +143,7 @@
             </dependency>
             <dependency>
                 <groupId>fish.payara.arquillian</groupId>
-                <artifactId>payara-client-ee7</artifactId>
+                <artifactId>payara-client-ee8</artifactId>
                 <version>${payara.arquillian.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -386,36 +386,7 @@
 
     <profiles>
 
-
         <!-- ###  PAYARA  ### -->
-        <profile>
-            <id>Payara Community</id>
-            <activation>
-                <property>
-                    <name>payara.version</name>
-                    <value>/^[5-9]\.[0-9]{4}\.[0-9]{1,2}.*/</value>
-                </property>
-            </activation>
-            <properties>
-                <payara.directory.name>payara5</payara.directory.name>
-                <payara.version.major>5</payara.version.major>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>Payara Enterprise</id>
-            <activation>
-                <property>
-                    <name>payara.version</name>
-                    <value>/^[5-9]\.[0-9]{1,2}\.[0-9].*/</value>
-                </property>
-            </activation>
-            <properties>
-                <payara.directory.name>payara5</payara.directory.name>
-                <payara.version.major>5</payara.version.major>
-            </properties>
-        </profile>
-
         <profile>
             <id>payara-server-managed</id>
 
@@ -427,7 +398,7 @@
                  <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee7</artifactId>
+                    <artifactId>payara-client-ee8</artifactId>
                 </dependency>
 
                 <!-- The actual Arquillian connector -->
@@ -474,8 +445,8 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <payara.home>${session.executionRootDirectory}/target/${payara.directory.name}</payara.home>
-                                <arquillian.launch>payara${payara.version.major}</arquillian.launch>
+                                <payara.home>${session.executionRootDirectory}/target/payara5</payara.home>
+                                <arquillian.launch>payara5</arquillian.launch>
                                 <payara_domain>${payara_domain}</payara_domain>
                             </systemPropertyVariables>
                         </configuration>
@@ -506,7 +477,7 @@
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee7</artifactId>
+                    <artifactId>payara-client-ee8</artifactId>
                 </dependency>
 
                 <!-- The Arquillian connector -->
@@ -585,7 +556,7 @@
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee7</artifactId>
+                    <artifactId>payara-client-ee8</artifactId>
                     <exclusions>
                         <exclusion>
                             <groupId>org.glassfish.grizzly</groupId>
@@ -631,7 +602,7 @@
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee7</artifactId>
+                    <artifactId>payara-client-ee8</artifactId>
                 </dependency>
 
                 <!-- The actual Arquillian connector -->
@@ -695,7 +666,7 @@
                 be on the classpath -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
-                    <artifactId>payara-client-ee7</artifactId>
+                    <artifactId>payara-client-ee8</artifactId>
                 </dependency>
 
                 <!-- The actual Arquillian connector -->
