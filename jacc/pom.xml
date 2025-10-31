@@ -12,8 +12,7 @@
     <name>Java EE 7 Sample: jacc</name>
 
     <modules>
-        <!-- FISH-10721 Disabled temporarily
-        <module>contexts</module>-->
+        <module>contexts</module>
         <module>permissions-xml</module>
     </modules>
 
