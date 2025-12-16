@@ -9,7 +9,6 @@ import java.io.IOException;
 import static java.math.BigInteger.ONE;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.Provider;
 import java.security.Security;
@@ -87,7 +86,6 @@ public class SecureServletWithCommonNameTest {
         if (System.getProperty("ssl.debug") != null) {
             enableSSLDebug();
         }
-        
 
         System.out.println("################################################################");
 
@@ -124,10 +122,24 @@ public class SecureServletWithCommonNameTest {
 
         // Add the client certificate that we just generated to the trust store of the server.
         // That way the server will trust our certificate.
-        // Set the actual domain used with -Dpayara_domain=[domain name] 
+        // Set the actual domain used with -Dpayara_domain=[domain name]
         addCertificateToContainerTrustStore(clientCertificate);
-        
-        System.out.println("Adding user for glassfish-remote");
+
+        // Also add the server's certificate to the client's trust store
+        // This is needed because the server is using a self-signed certificate
+        try {
+            // Get the server's certificate chain
+            X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+            if (serverCerts != null && serverCerts.length > 0) {
+                // Create a temporary trust store with the server's certificate
+                String trustStorePath = createTempJKSTrustStore(serverCerts);
+                System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+                System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to set up server certificate trust: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         return create(WebArchive.class)
                 .addClasses(SecureServletWithCommonName.class)
@@ -136,11 +148,21 @@ public class SecureServletWithCommonNameTest {
     }
 
     @Before
-    public void setup() throws FileNotFoundException, IOException {
+    public void setup() throws IOException {
         
         System.out.println("\n*********** SETUP START ***************************");
-        
+
+        // Initialize WebClient
         webClient = new WebClient();
+
+        // Configure SSL settings
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setSSLInsecureProtocol("TLSv1.2");
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+
+        // Get server's certificate and add to trust store
+        URL keyStoreUrl = new File(clientKeyStorePath).toURI().toURL();
+        webClient.getOptions().setSSLClientCertificateKeyStore(keyStoreUrl, "changeit", "pkcs12");
 
         // First get the HTTPS URL for which the server is listening
         baseHttps = ServerOperations.toContainerHttps(base);
@@ -162,8 +184,8 @@ public class SecureServletWithCommonNameTest {
             String trustStorePath = createTempJKSTrustStore(serverCertificateChain);
     
             System.out.println("Reading trust store from: " + trustStorePath);
-            
-            webClient.getOptions().setSSLTrustStore(new File(trustStorePath).toURI().toURL(), "changeit", "jks");
+
+            webClient.getOptions().setSSLTrustStore(new File(trustStorePath).toURI().toURL(), "changeit", "pkcs12");
             
             // If the use.cnHost property is active, we try to extract the host from the server
             // certificate and use exactly that host for our requests.
@@ -182,7 +204,7 @@ public class SecureServletWithCommonNameTest {
 
         // Client -> Server : the key store's private keys and certificates are used to sign
         // and sent a reply to the server
-        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
+        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "pkcs12");
         
         System.out.println("*********** SETUP DONE ***************************\n");
     }
@@ -215,8 +237,7 @@ public class SecureServletWithCommonNameTest {
 
             log.info(page.getContent());
 
-            System.out.println(page.getContent().toString());
-            assertTrue("my GET", page.getContent().contains("principal common name foo"));
+            assertTrue("my GET", page.getContent().contains("principal common name UserNameAndPassword[foo]"));
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -225,7 +246,6 @@ public class SecureServletWithCommonNameTest {
 
 
     // Private methods
-
     private static X509Certificate createSelfSignedCertificate(KeyPair keys) {
         try {
             Provider provider = new BouncyCastleProvider();

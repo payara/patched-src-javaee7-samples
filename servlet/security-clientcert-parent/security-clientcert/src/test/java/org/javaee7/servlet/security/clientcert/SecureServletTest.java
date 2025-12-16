@@ -22,7 +22,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.Provider;
-import java.security.Security;import java.security.cert.CertificateException;
+import java.security.Security;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -138,7 +139,7 @@ public class SecureServletTest {
 
         System.out.println("\n*********** SETUP START ***************************");
 
-        // Initialize WebClient with Chrome browser emulation
+        // Initialize WebClient
         webClient = new WebClient();
 
         // Configure SSL settings
