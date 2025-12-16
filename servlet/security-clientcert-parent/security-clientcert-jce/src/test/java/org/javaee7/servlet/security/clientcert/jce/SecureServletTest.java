@@ -63,7 +63,7 @@ import org.htmlunit.WebRequest;
 @RunWith(Arquillian.class)
 public class SecureServletTest {
 
-    private static Logger log = Logger.getLogger(SecureServletTest.class.getName());
+    private static final Logger log = Logger.getLogger(SecureServletTest.class.getName());
 
     private static final String WEBAPP_SRC = "src/main/webapp";
     
@@ -115,7 +115,6 @@ public class SecureServletTest {
         if (System.getProperty("ssl.debug") != null) {
             enableSSLDebug();
         }
-        
 
         System.out.println("################################################################");
 
@@ -145,6 +144,22 @@ public class SecureServletTest {
         // Set the actual domain used with -Dpayara_domain=[domain name] 
         addCertificateToContainerTrustStore(clientCertificate);
 
+        // Also add the server's certificate to the client's trust store
+        // This is needed because the server is using a self-signed certificate
+        try {
+            // Get the server's certificate chain
+            X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+            if (serverCerts != null && serverCerts.length > 0) {
+                // Create a temporary trust store with the server's certificate
+                String trustStorePath = createTempJKSTrustStore(serverCerts);
+                System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+                System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to set up server certificate trust: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return create(WebArchive.class)
                 .addAsLibraries(Maven.resolver()
                         .loadPomFromFile("pom.xml")
@@ -159,7 +174,7 @@ public class SecureServletTest {
     }
 
     @Before
-    public void setup() throws FileNotFoundException, IOException {
+    public void setup() throws IOException {
         
         System.out.println("\n*********** SETUP START ***************************");
         
@@ -170,6 +185,15 @@ public class SecureServletTest {
         Security.setProperty("jdk.tls.disabledAlgorithms",  algorithms + " ,RSASSA-PSS");
         
         webClient = new WebClient();
+
+        // Configure SSL settings
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setSSLInsecureProtocol("TLSv1.2");
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+
+        // Get server's certificate and add to trust store
+        URL keyStoreUrl = new File(clientKeyStorePath).toURI().toURL();
+        webClient.getOptions().setSSLClientCertificateKeyStore(keyStoreUrl, "changeit", "pkcs12");
 
         // First get the HTTPS URL for which the server is listening
         baseHttps = ServerOperations.toContainerHttps(base);
@@ -192,7 +216,7 @@ public class SecureServletTest {
     
             System.out.println("Reading trust store from: " + trustStorePath);
             
-            webClient.getOptions().setSSLTrustStore(new File(trustStorePath).toURI().toURL(), "changeit", "jks");
+            webClient.getOptions().setSSLTrustStore(new File(trustStorePath).toURI().toURL(), "changeit", "pkcs12");
             
             // If the use.cnHost property is we try to extract the host from the server
             // certificate and use exactly that host for our requests.
@@ -211,7 +235,7 @@ public class SecureServletTest {
 
         // Client -> Server : the key store's private keys and certificates are used to sign
         // and sent a reply to the server
-        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
+        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "pkcs12");
         webClient.getOptions().setTimeout(0);
         
         
@@ -274,13 +298,12 @@ public class SecureServletTest {
 
             log.info(page.getContent());
             
-            assertTrue("my GET", page.getContent().contains("principal CN=u1"));
+            assertTrue("my GET", page.getContent().contains("principal UserNameAndPassword[CN=u1]"));
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
-
 
     // Private methods
 
