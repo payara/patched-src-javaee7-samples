@@ -127,19 +127,14 @@ public class SecureServletWithCommonNameTest {
 
         // Also add the server's certificate to the client's trust store
         // This is needed because the server is using a self-signed certificate
-        try {
-            // Get the server's certificate chain
-            X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
-            if (serverCerts != null && serverCerts.length > 0) {
-                // Create a temporary trust store with the server's certificate
-                String trustStorePath = createTempJKSTrustStore(serverCerts);
-                System.setProperty("javax.net.ssl.trustStore", trustStorePath);
-                System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to set up server certificate trust: " + e.getMessage());
-            e.printStackTrace();
-        }
+
+        // Get the server's certificate chain
+        X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+
+        // Create a temporary trust store with the server's certificate
+        String trustStorePath = createTempJKSTrustStore(serverCerts);
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.out.println("Using custom trust store with server certificate at: " + trustStorePath);;
 
         return create(WebArchive.class)
                 .addClasses(SecureServletWithCommonName.class)

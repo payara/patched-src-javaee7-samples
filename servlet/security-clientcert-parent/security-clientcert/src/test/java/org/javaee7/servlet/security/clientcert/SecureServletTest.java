@@ -1,4 +1,6 @@
-/** Copyright Payara Services Limited **/
+/**
+ * Copyright Payara Services Limited
+ **/
 package org.javaee7.servlet.security.clientcert;
 
 import static java.math.BigInteger.ONE;
@@ -114,19 +116,14 @@ public class SecureServletTest {
 
         // Also add the server's certificate to the client's trust store
         // This is needed because the server is using a self-signed certificate
-        try {
-            // Get the server's certificate chain
-            X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
-            if (serverCerts != null && serverCerts.length > 0) {
-                // Create a temporary trust store with the server's certificate
-                String trustStorePath = createTempJKSTrustStore(serverCerts);
-                System.setProperty("javax.net.ssl.trustStore", trustStorePath);
-                System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to set up server certificate trust: " + e.getMessage());
-            e.printStackTrace();
-        }
+
+        // Get the server's certificate chain
+        X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+
+        // Create a temporary trust store with the server's certificate
+        String trustStorePath = createTempJKSTrustStore(serverCerts);
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
 
         return create(WebArchive.class)
                 .addClasses(SecureServlet.class)
@@ -204,24 +201,16 @@ public class SecureServletTest {
 
         System.out.println("\n*********** TEST START ***************************\n");
 
-        try {
-            TextPage page = webClient.getPage(baseHttps + "SecureServlet");
+        TextPage page = webClient.getPage(baseHttps + "SecureServlet");
+        log.info(page.getContent());
+        assertTrue("my GET",
+                // RFC 1779
+                page.getContent().contains("principal C=UK, ST=lak, L=zak, O=kaz, OU=bar, CN=lfoo") ||
+                // RFC 2253
+                page.getContent().contains("principal UserNameAndPassword[C=UK,ST=lak,L=zak,O=kaz,OU=bar,CN=lfoo]")
+        );
 
-            log.info(page.getContent());
-
-            assertTrue("my GET",
-                    // RFC 1779
-                    page.getContent().contains("principal C=UK, ST=lak, L=zak, O=kaz, OU=bar, CN=lfoo") ||
-
-                    // RFC 2253
-                    page.getContent().contains("principal UserNameAndPassword[C=UK,ST=lak,L=zak,O=kaz,OU=bar,CN=lfoo]")
-                );
-
-            log.info("Found " + page.getContent() + " in " + baseHttps + "SecureServlet");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        log.info("Found " + page.getContent() + " in " + baseHttps + "SecureServlet");
     }
 
     // Private methods
