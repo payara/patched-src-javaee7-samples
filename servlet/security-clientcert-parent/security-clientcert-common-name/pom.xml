@@ -51,7 +51,7 @@
         <profile>
             <id>stable</id>
             <properties>
-                <skipServletClientCertificateCommonName>true</skipServletClientCertificateCommonName>
+                <skipServletClientCertificateCommonName>false</skipServletClientCertificateCommonName>
             </properties>
         </profile>
     </profiles>
