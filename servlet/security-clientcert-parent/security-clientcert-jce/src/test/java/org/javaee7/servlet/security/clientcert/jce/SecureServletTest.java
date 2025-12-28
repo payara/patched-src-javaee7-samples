@@ -268,7 +268,7 @@ public class SecureServletTest {
         //            at org.apache.http.impl.conn.CPoolEntry.close(CPoolEntry.java:96)
         //            at org.apache.http.pool.AbstractConnPool.shutdown(AbstractConnPool.java:148)
         //            at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.shutdown(PoolingHttpClientConnectionManager.java:411)
-        //            at com.gargoylesoftware.htmlunit.HttpWebConnection.close(HttpWebConnection.java:1011)
+        //            at org.htmlunit.HttpWebConnection.close(HttpWebConnection.java:1011)
         //
         // Visible when -Dssl.debug is used
         //

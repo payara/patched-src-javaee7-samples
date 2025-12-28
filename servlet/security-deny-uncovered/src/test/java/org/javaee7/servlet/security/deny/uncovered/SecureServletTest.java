@@ -1,7 +1,7 @@
 package org.javaee7.servlet.security.deny.uncovered;
 
-import static com.gargoylesoftware.htmlunit.HttpMethod.POST;
-import static com.gargoylesoftware.htmlunit.HttpMethod.PUT;
+import static org.htmlunit.HttpMethod.POST;
+import static org.htmlunit.HttpMethod.PUT;
 import static org.javaee7.ServerOperations.addUsersToContainerIdentityStore;
 import static org.jboss.shrinkwrap.api.ShrinkWrap.create;
 import static org.junit.Assert.assertEquals;
@@ -20,11 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import org.htmlunit.DefaultCredentialsProvider;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 
 /**
  * @author Arun Gupta
