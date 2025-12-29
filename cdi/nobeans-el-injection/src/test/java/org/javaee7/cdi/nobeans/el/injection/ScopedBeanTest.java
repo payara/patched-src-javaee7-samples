@@ -4,6 +4,10 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebConversation;
 import java.io.File;
 import java.net.URL;
+
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -34,9 +38,13 @@ public class ScopedBeanTest {
 
     @Test
     public void checkRenderedPage() throws Exception {
-        WebConversation conv = new WebConversation();
-        GetMethodWebRequest getRequest = new GetMethodWebRequest(base + "/faces/index.xhtml");
-        String responseText = conv.getResponse(getRequest).getText();
-        assert (responseText.contains("Hello there!"));
+        try (WebClient webClient = new WebClient()) {
+            webClient.getOptions().setJavaScriptEnabled(true);
+            // Make sure to wait for AJAX requests in the foreground
+            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            HtmlPage page = webClient.getPage(base + "/faces/index.xhtml");
+            assert (page.asNormalizedText().contains("Hello there!"));
+        }
     }
 }
