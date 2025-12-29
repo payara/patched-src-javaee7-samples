@@ -122,21 +122,21 @@
      -->
     <modules>
         <module>test-utils</module>
-<!--        <module>batch</module>-->
-<!--        <module>cdi</module>-->
-<!--        <module>concurrency</module>-->
-<!--        <module>ejb</module>-->
-<!--        <module>el</module>-->
-<!--        <module>interceptor</module>-->
-<!--        <module>javamail</module>-->
-<!--        <module>jaspic</module>-->
-<!--        <module>jacc</module>-->
-<!--        <module>jaxrs</module>-->
-<!--        <module>jaxws</module>-->
-<!--        <module>jca</module>-->
-<!--        <module>jms</module>-->
-<!--        <module>jpa</module>-->
-<!--        <module>jta</module>-->
+        <module>batch</module>
+        <module>cdi</module>
+        <module>concurrency</module>
+        <module>ejb</module>
+        <module>el</module>
+        <module>interceptor</module>
+        <module>javamail</module>
+        <module>jaspic</module>
+        <module>jacc</module>
+        <module>jaxrs</module>
+        <module>jaxws</module>
+        <module>jca</module>
+        <module>jms</module>
+        <module>jpa</module>
+        <module>jta</module>
         <module>jsf</module>
         <module>json</module>
         <module>servlet</module>
