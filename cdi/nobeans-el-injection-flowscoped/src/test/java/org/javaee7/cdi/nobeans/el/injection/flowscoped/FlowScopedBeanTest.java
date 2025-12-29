@@ -39,6 +39,6 @@ public class FlowScopedBeanTest {
         WebClient webClient = new WebClient();
         HtmlPage page = webClient.getPage(base + "/faces/myflow/index.xhtml");
         assertNotNull(page);
-        assert (page.asText().contains("Hello there!"));
+        assert (page.asNormalizedText().contains("Hello there!"));
     }
 }
