@@ -47,8 +47,8 @@ public class MyResourceTest {
     @Before
     public void setup() {
         webClient = new WebClient();
-        correctCreds.addCredentials("u1", "p1");
-        incorrectCreds.addCredentials("random", "random");
+        correctCreds.addCredentials("u1", "p1".toCharArray());
+        incorrectCreds.addCredentials("random", "random".toCharArray());
     }
     
     @After
