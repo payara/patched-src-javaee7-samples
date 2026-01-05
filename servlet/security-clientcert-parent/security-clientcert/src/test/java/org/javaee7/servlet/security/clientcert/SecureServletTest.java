@@ -1,4 +1,6 @@
-/** Copyright Payara Services Limited **/
+/**
+ * Copyright Payara Services Limited
+ **/
 package org.javaee7.servlet.security.clientcert;
 
 import static java.math.BigInteger.ONE;
@@ -31,6 +33,7 @@ import java.util.logging.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Jdk14Logger;
+
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -38,6 +41,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+
 import org.javaee7.ServerOperations;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -73,7 +77,7 @@ public class SecureServletTest {
     public static WebArchive createDeployment() throws FileNotFoundException, IOException {
 
         System.out.println("\n*********** DEPLOYMENT START ***************************");
-        
+
         Security.addProvider(new BouncyCastleProvider());
 
         // Enable to get detailed logging about the SSL handshake on the client
@@ -81,7 +85,6 @@ public class SecureServletTest {
         if (System.getProperty("ssl.debug") != null) {
             enableSSLDebug();
         }
-        
 
         System.out.println("################################################################");
 
@@ -95,14 +98,14 @@ public class SecureServletTest {
 
         // Create a new local key store containing the client private key and the certificate
         clientKeyStorePath = createTempJKSKeyStore(clientKeyPair.getPrivate(), clientCertificate);
-        
+
         // Enable to get detailed logging about the SSL handshake on the server
-        
+
         if (System.getProperty("ssl.debug") != null) {
             System.out.println("Setting server SSL debug on");
             addContainerSystemProperty("jakarta.net.debug", "ssl:handshake");
         }
-        
+
         // Only test TLS v1.2 for now
         System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
 
@@ -111,6 +114,17 @@ public class SecureServletTest {
         // Set the actual domain used with -Dpayara_domain=[domain name] 
         addCertificateToContainerTrustStore(clientCertificate);
 
+        // Also add the server's certificate to the client's trust store
+        // This is needed because the server is using a self-signed certificate
+
+        // Get the server's certificate chain
+        X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+
+        // Create a temporary trust store with the server's certificate
+        String trustStorePath = createTempJKSTrustStore(serverCerts);
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
+
         return create(WebArchive.class)
                 .addClasses(SecureServlet.class)
                 .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "web.xml")))
@@ -118,35 +132,41 @@ public class SecureServletTest {
     }
 
     @Before
-    public void setup() throws FileNotFoundException, IOException {
-        
+    public void setup() throws IOException {
+
         System.out.println("\n*********** SETUP START ***************************");
-        
+
+        // Initialize WebClient
         webClient = new WebClient();
 
-        // First get the HTTPS URL for which the server is listening
+        // Configure SSL settings
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setSSLInsecureProtocol("TLSv1.2");
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+
+        // Configure client certificate and trust store
+        URL keyStoreUrl = new File(clientKeyStorePath).toURI().toURL();
+        webClient.getOptions().setSSLClientCertificateKeyStore(keyStoreUrl, "changeit", "pkcs12");
+
+        // Get the HTTPS URL for which the server is listening
         baseHttps = ServerOperations.toContainerHttps(base);
         if (baseHttps == null) {
             throw new IllegalStateException("No https URL could be created from " + base);
         }
-        
-        // ### Ask the server for its certificate and add that to a new local trust store
-        
-        // Server -> client : the trust store certificates are used to validate the certificate sent
-        // by the server
-        
+
+        // Get server's certificate and add to trust store
         X509Certificate[] serverCertificateChain = getCertificateChainFromServer(baseHttps.getHost(), baseHttps.getPort());
-        
+
         if (!isEmpty(serverCertificateChain)) {
-            
             System.out.println("Obtained certificate from server. Storing it in client trust store");
-        
+
+            // Create and configure trust store with server's certificate
             String trustStorePath = createTempJKSTrustStore(serverCertificateChain);
-    
-            System.out.println("Reading trust store from: " + trustStorePath);
-            
-            webClient.getOptions().setSSLTrustStore(new File(trustStorePath).toURI().toURL(), "changeit", "jks");
-            
+            System.out.println("Using trust store at: " + trustStorePath);
+
+            // Set the trust store for the WebClient
+            webClient.getOptions().setSSLTrustStore(new File(trustStorePath).toURI().toURL(), "changeit", "pkcs12");
+
             // If the use.cnHost property is we try to extract the host from the server
             // certificate and use exactly that host for our requests.
             // This is needed if a server is listening to multiple host names, for instance
@@ -159,13 +179,13 @@ public class SecureServletTest {
         } else {
             System.out.println("Could not obtain certificates from server. Continuing without custom truststore");
         }
-       
+
         System.out.println("Using client key store from: " + clientKeyStorePath);
 
         // Client -> Server : the key store's private keys and certificates are used to sign
         // and sent a reply to the server
-        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
-        
+        webClient.getOptions().setSSLClientCertificateKeyStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "pkcs12");
+
         System.out.println("*********** SETUP DONE ***************************\n");
     }
 
@@ -178,32 +198,22 @@ public class SecureServletTest {
 
     @Test
     public void testGetWithCorrectCredentials() throws Exception {
-        
+
         System.out.println("\n*********** TEST START ***************************\n");
-        
-        try {
-            TextPage page = webClient.getPage(baseHttps + "SecureServlet");
 
-            log.info(page.getContent());
+        TextPage page = webClient.getPage(baseHttps + "SecureServlet");
+        log.info(page.getContent());
+        assertTrue("my GET",
+                // RFC 1779
+                page.getContent().contains("principal C=UK, ST=lak, L=zak, O=kaz, OU=bar, CN=lfoo") ||
+                // RFC 2253
+                page.getContent().contains("principal UserNameAndPassword[C=UK,ST=lak,L=zak,O=kaz,OU=bar,CN=lfoo]")
+        );
 
-            assertTrue("my GET", 
-                    // RFC 1779
-                    page.getContent().contains("principal C=UK, ST=lak, L=zak, O=kaz, OU=bar, CN=lfoo") ||
-                    
-                    // RFC 2253
-                    page.getContent().contains("principal C=UK,ST=lak,L=zak,O=kaz,OU=bar,CN=lfoo")
-                );
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        log.info("Found " + page.getContent() + " in " + baseHttps + "SecureServlet");
     }
 
-
     // Private methods
-
-    // TODO: may move these to utility class
-
     private static X509Certificate createSelfSignedCertificate(KeyPair keys) {
         try {
             Provider provider = new BouncyCastleProvider();
@@ -226,8 +236,8 @@ public class SecureServletTest {
             throw new IllegalStateException(e);
         }
     }
-   
-    
+
+
     private static URL getHostFromCertificate(X509Certificate[] serverCertificateChain, URL existingURL) {
         try {
             URL httpsUrl = new URL(
@@ -236,24 +246,24 @@ public class SecureServletTest {
                 existingURL.getPort(),
                 existingURL.getFile()
             );
-            
+
             System.out.println("Changing base URL from " + existingURL + " into " + httpsUrl + "\n");
-            
+
             return httpsUrl;
-            
+
         } catch (MalformedURLException e) {
             System.out.println("Failure creating HTTPS URL");
             e.printStackTrace();
-            
+
             System.out.println("FAILED to get CN. Using existing URL: " + existingURL);
-            
+
             return existingURL;
         }
     }
-    
+
     private static void enableSSLDebug() {
         System.setProperty("javax.net.debug", "ssl:handshake");
-        
+
         System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "debug");
         Logger.getLogger("org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
         Logger.getLogger("org.apache.http.conn.ssl.SSLConnectionSocketFactory").setLevel(FINEST);
