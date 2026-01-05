@@ -21,8 +21,8 @@ import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.WebClient;
 
 /**
  * 

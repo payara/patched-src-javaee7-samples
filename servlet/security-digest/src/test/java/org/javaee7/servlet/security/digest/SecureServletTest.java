@@ -1,7 +1,7 @@
 /** Portions Copyright Payara Services Limited **/
 package org.javaee7.servlet.security.digest;
 
-import static com.gargoylesoftware.htmlunit.HttpMethod.POST;
+import static org.htmlunit.HttpMethod.POST;
 import static org.jboss.shrinkwrap.api.ShrinkWrap.create;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -24,11 +24,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import org.htmlunit.DefaultCredentialsProvider;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 
 /**
  * @author Arun Gupta
@@ -66,8 +66,8 @@ public class SecureServletTest {
     @Before
     public void setup() {
         webClient = new WebClient();
-        correctCreds.addCredentials("u1", "p1");
-        incorrectCreds.addCredentials("random", "random");
+        correctCreds.addCredentials("u1", "p1".toCharArray());
+        incorrectCreds.addCredentials("random", "random".toCharArray());
     }
     
     @After

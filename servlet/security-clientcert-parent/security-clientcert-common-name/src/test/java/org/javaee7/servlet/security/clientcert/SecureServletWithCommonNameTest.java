@@ -1,15 +1,14 @@
 /** Copyright Payara Services Limited **/
 package org.javaee7.servlet.security.clientcert;
 
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import static java.math.BigInteger.ONE;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.security.Provider;
 import java.security.Security;
@@ -126,6 +125,17 @@ public class SecureServletWithCommonNameTest {
         // That way the server will trust our certificate.
         // Set the actual domain used with -Dpayara_domain=[domain name] 
         addCertificateToContainerTrustStore(clientCertificate);
+
+        // Also add the server's certificate to the client's trust store
+        // This is needed because the server is using a self-signed certificate
+
+        // Get the server's certificate chain
+        X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+
+        // Create a temporary trust store with the server's certificate
+        String trustStorePath = createTempJKSTrustStore(serverCerts);
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.out.println("Using custom trust store with server certificate at: " + trustStorePath);;
         
         System.out.println("Adding user for glassfish-remote");
 
@@ -136,11 +146,20 @@ public class SecureServletWithCommonNameTest {
     }
 
     @Before
-    public void setup() throws FileNotFoundException, IOException {
+    public void setup() throws IOException {
         
         System.out.println("\n*********** SETUP START ***************************");
         
         webClient = new WebClient();
+
+        // Configure SSL settings
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setSSLInsecureProtocol("TLSv1.2");
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+
+        // Get server's certificate and add to trust store
+        URL keyStoreUrl = new File(clientKeyStorePath).toURI().toURL();
+        webClient.getOptions().setSSLClientCertificateKeyStore(keyStoreUrl, "changeit", "jks");
 
         // First get the HTTPS URL for which the server is listening
         baseHttps = ServerOperations.toContainerHttps(base);
@@ -182,7 +201,7 @@ public class SecureServletWithCommonNameTest {
 
         // Client -> Server : the key store's private keys and certificates are used to sign
         // and sent a reply to the server
-        webClient.getOptions().setSSLClientCertificate(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
+        webClient.getOptions().setSSLTrustStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
         
         System.out.println("*********** SETUP DONE ***************************\n");
     }
@@ -277,11 +296,11 @@ public class SecureServletWithCommonNameTest {
         System.setProperty("javax.net.debug", "ssl:handshake");
         
         System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "debug");
-        Logger.getLogger("com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
+        Logger.getLogger("org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
         Logger.getLogger("org.apache.http.conn.ssl.SSLConnectionSocketFactory").setLevel(FINEST);
         Log logger = LogFactory.getLog(org.apache.http.conn.ssl.SSLConnectionSocketFactory.class);
         ((Jdk14Logger) logger).getLogger().setLevel(FINEST);
-        logger = LogFactory.getLog(com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory.class);
+        logger = LogFactory.getLog(org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory.class);
         ((Jdk14Logger) logger).getLogger().setLevel(FINEST);
         Logger.getGlobal().getParent().getHandlers()[0].setLevel(FINEST);
     }

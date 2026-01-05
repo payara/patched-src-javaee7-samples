@@ -52,10 +52,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.omnifaces.utils.security.Certificates;
 
-import com.gargoylesoftware.htmlunit.HttpMethod;
-import com.gargoylesoftware.htmlunit.TextPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
+import org.htmlunit.HttpMethod;
+import org.htmlunit.TextPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 
 /**
  * @author Arjan Tijms
@@ -115,7 +115,6 @@ public class SecureServletTest {
         if (System.getProperty("ssl.debug") != null) {
             enableSSLDebug();
         }
-        
 
         System.out.println("################################################################");
 
@@ -145,6 +144,16 @@ public class SecureServletTest {
         // Set the actual domain used with -Dpayara_domain=[domain name] 
         addCertificateToContainerTrustStore(clientCertificate);
 
+        // Also add the server's certificate to the client's trust store
+        // This is needed because the server is using a self-signed certificate
+        // Get the server's certificate chain
+        X509Certificate[] serverCerts = getCertificateChainFromServer("localhost", 8181);
+
+        // Create a temporary trust store with the server's certificate
+        String trustStorePath = createTempJKSTrustStore(serverCerts);
+        System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+        System.out.println("Using custom trust store with server certificate at: " + trustStorePath);
+
         return create(WebArchive.class)
                 .addAsLibraries(Maven.resolver()
                         .loadPomFromFile("pom.xml")
@@ -159,7 +168,7 @@ public class SecureServletTest {
     }
 
     @Before
-    public void setup() throws FileNotFoundException, IOException {
+    public void setup() throws IOException {
         
         System.out.println("\n*********** SETUP START ***************************");
         
@@ -170,6 +179,15 @@ public class SecureServletTest {
         Security.setProperty("jdk.tls.disabledAlgorithms",  algorithms + " ,RSASSA-PSS");
         
         webClient = new WebClient();
+
+        // Configure SSL settings
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setSSLInsecureProtocol("TLSv1.2");
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+
+        // Get server's certificate and add to trust store
+        URL keyStoreUrl = new File(clientKeyStorePath).toURI().toURL();
+        webClient.getOptions().setSSLClientCertificateKeyStore(keyStoreUrl, "changeit", "jks");
 
         // First get the HTTPS URL for which the server is listening
         baseHttps = ServerOperations.toContainerHttps(base);
@@ -211,7 +229,7 @@ public class SecureServletTest {
 
         // Client -> Server : the key store's private keys and certificates are used to sign
         // and sent a reply to the server
-        webClient.getOptions().setSSLClientCertificate(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
+        webClient.getOptions().setSSLTrustStore(new File(clientKeyStorePath).toURI().toURL(), "changeit", "jks");
         webClient.getOptions().setTimeout(0);
         
         
@@ -249,7 +267,7 @@ public class SecureServletTest {
         //            at org.apache.http.impl.conn.CPoolEntry.close(CPoolEntry.java:96)
         //            at org.apache.http.pool.AbstractConnPool.shutdown(AbstractConnPool.java:148)
         //            at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.shutdown(PoolingHttpClientConnectionManager.java:411)
-        //            at com.gargoylesoftware.htmlunit.HttpWebConnection.close(HttpWebConnection.java:1011)
+        //            at org.htmlunit.HttpWebConnection.close(HttpWebConnection.java:1011)
         //
         // Visible when -Dssl.debug is used
         //
@@ -337,11 +355,11 @@ public class SecureServletTest {
         System.setProperty("javax.net.debug", "ssl:handshake");
         
         System.getProperties().put("org.apache.commons.logging.simplelog.defaultlog", "debug");
-        Logger.getLogger("com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
+        Logger.getLogger("org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory").setLevel(FINEST);
         Logger.getLogger("org.apache.http.conn.ssl.SSLConnectionSocketFactory").setLevel(FINEST);
         Log logger = LogFactory.getLog(org.apache.http.conn.ssl.SSLConnectionSocketFactory.class);
         ((Jdk14Logger) logger).getLogger().setLevel(FINEST);
-        logger = LogFactory.getLog(com.gargoylesoftware.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory.class);
+        logger = LogFactory.getLog(org.htmlunit.httpclient.HtmlUnitSSLConnectionSocketFactory.class);
         ((Jdk14Logger) logger).getLogger().setLevel(FINEST);
         Logger.getGlobal().getParent().getHandlers()[0].setLevel(FINEST);
     }
