@@ -70,7 +70,7 @@ public class SecureServletTest {
     private static String clientKeyStorePath;
 
     @Deployment(testable = false)
-    public static WebArchive createDeployment() throws FileNotFoundException, IOException {
+    public static WebArchive createDeployment() {
 
         System.out.println("\n*********** DEPLOYMENT START ***************************");
         
@@ -118,7 +118,7 @@ public class SecureServletTest {
     }
 
     @Before
-    public void setup() throws FileNotFoundException, IOException {
+    public void setup() throws IOException {
         
         System.out.println("\n*********** SETUP START ***************************");
         
