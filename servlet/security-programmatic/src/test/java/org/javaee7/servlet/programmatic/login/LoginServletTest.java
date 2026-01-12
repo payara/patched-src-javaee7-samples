@@ -16,8 +16,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 
 /**
  * @author Arun Gupta
@@ -44,7 +44,7 @@ public class LoginServletTest {
     public void testUnauthenticatedRequest() throws IOException, SAXException {
         WebClient webClient = new WebClient();
         HtmlPage page = webClient.getPage(base + "/LoginServlet");
-        String responseText = page.asText();
+        String responseText = page.asNormalizedText();
         System.out.println("testUnauthenticatedRequest:\n" + responseText + "\n");
 
         assertTrue(responseText.contains("isUserInRole?false"));
@@ -57,7 +57,7 @@ public class LoginServletTest {
     public void testAuthenticatedRequest() throws IOException, SAXException {
         WebClient webClient = new WebClient();
         HtmlPage page = webClient.getPage(base + "/LoginServlet?user=u1&password=p1");
-        String responseText = page.asText();
+        String responseText = page.asNormalizedText();
         System.out.println("testAuthenticatedRequest:\n" + responseText + "\n");
 
         assertTrue(responseText.contains("isUserInRole?true"));

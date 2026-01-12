@@ -1,14 +1,14 @@
 package org.javaee7.jsf.bean.validation;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlButtonInput;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSpan;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTextInput;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -68,7 +68,7 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("nameMessage");
-        assertEquals("At least 3 characters", span.asText());
+        assertEquals("At least 3 characters", span.asNormalizedText());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("nameMessage");
-        assertEquals("", span.asText());
+        assertEquals("", span.asNormalizedText());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("ageMessage");
-        assertEquals("must be greater than or equal to 18", span.asText());
+        assertEquals("must be greater than or equal to 18", span.asNormalizedText());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("ageMessage");
-        assertEquals("", span.asText());
+        assertEquals("", span.asNormalizedText());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("ageMessage");
-        assertEquals("", span.asText());
+        assertEquals("", span.asNormalizedText());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("ageMessage");
-        assertEquals("must be less than or equal to 25", span.asText());
+        assertEquals("must be less than or equal to 25", span.asNormalizedText());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class MyBeanTest {
         zipInputText.setText("abcde");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("zipMessage");
-        assertEquals("must match \"[0-9]{5}\"", span.asText());
+        assertEquals("must match \"[0-9]{5}\"", span.asNormalizedText());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class MyBeanTest {
         zipInputText.setText("1234");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("zipMessage");
-        assertEquals("must match \"[0-9]{5}\"", span.asText());
+        assertEquals("must match \"[0-9]{5}\"", span.asNormalizedText());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class MyBeanTest {
         zipInputText.setText("123456");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("zipMessage");
-        assertEquals("must match \"[0-9]{5}\"", span.asText());
+        assertEquals("must match \"[0-9]{5}\"", span.asNormalizedText());
     }
 
     @Test
@@ -158,6 +158,6 @@ public class MyBeanTest {
         zipInputText.setText("12345");
         HtmlPage result = button.click();
         HtmlSpan span = (HtmlSpan) result.getElementById("zipMessage");
-        assertEquals("", span.asText());
+        assertEquals("", span.asNormalizedText());
     }
 }

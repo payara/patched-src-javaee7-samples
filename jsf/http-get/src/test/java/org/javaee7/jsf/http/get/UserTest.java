@@ -1,10 +1,10 @@
 package org.javaee7.jsf.http.get;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButtonInput;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButtonInput;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlPage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -53,7 +53,7 @@ public class UserTest {
     public void testLink() throws IOException {
         HtmlAnchor anchor = (HtmlAnchor) page.getElementById("link1");
         assertTrue(anchor.getHrefAttribute().contains("faces/login.xhtml"));
-        assertEquals("Login1", anchor.asText());
+        assertEquals("Login1", anchor.asNormalizedText());
 
         HtmlPage output = anchor.click();
         assertEquals("HTTP GET (Login)", output.getTitleText());
@@ -64,7 +64,7 @@ public class UserTest {
         HtmlAnchor anchor = (HtmlAnchor) page.getElementById("link2");
         assertTrue(anchor.getHrefAttribute().contains("faces/login.xhtml"));
         assertTrue(anchor.getHrefAttribute().contains("?name=Jack"));
-        assertEquals("Login2", anchor.asText());
+        assertEquals("Login2", anchor.asNormalizedText());
 
         HtmlPage output = anchor.click();
         assertEquals("HTTP GET (Login)", output.getTitleText());
@@ -73,7 +73,7 @@ public class UserTest {
     @Test
     public void testLinkWithPreProcessParams() {
         HtmlAnchor anchor = (HtmlAnchor) page.getElementById("link3");
-        assertEquals("Login3", anchor.asText());
+        assertEquals("Login3", anchor.asNormalizedText());
         assertTrue(anchor.getHrefAttribute().contains("faces/index2.xhtml"));
         assertTrue(anchor.getHrefAttribute().contains("?name=Jack"));
     }
@@ -81,7 +81,7 @@ public class UserTest {
     @Test
     public void testButton() throws IOException {
         HtmlButtonInput button = (HtmlButtonInput) page.getElementById("button1");
-        assertEquals("Login4", button.asText());
+        assertEquals("Login4", button.asNormalizedText());
 
         HtmlPage output = button.click();
         assertEquals("HTTP GET (Login)", output.getTitleText());
