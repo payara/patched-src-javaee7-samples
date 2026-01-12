@@ -375,16 +375,9 @@
         </pluginManagement>
     </build>
 
-
-
     <!-- Profiles for the application servers against which the samples are run -->
-
-
     <profiles>
-
-
         <!-- ###  PAYARA  ### -->
-
         <profile>
             <id>payara4</id>
             <activation>
