@@ -139,7 +139,7 @@ public class SecureServletWithCommonNameTest {
         return create(WebArchive.class)
                 .addClasses(SecureServletWithCommonName.class)
                 .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "web.xml")))
-                .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "glassfish-web.xml")));
+                .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "payara-web.xml")));
     }
 
     @Before

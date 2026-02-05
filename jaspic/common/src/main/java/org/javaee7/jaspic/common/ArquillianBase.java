@@ -75,7 +75,7 @@ public class ArquillianBase {
                 .deleteClass(ArquillianBase.class)
                 .addAsWebInfResource(resource("web.xml"))
                 .addAsWebInfResource(resource("jboss-web.xml"))
-                .addAsWebInfResource(resource("glassfish-web.xml"));
+                .addAsWebInfResource(resource("payara-web.xml"));
     }
     
     public static Archive<?> tryWrapEAR(WebArchive webArchive) {
