@@ -45,7 +45,7 @@ public class FormTest {
             .addAsWebResource(new File(WEBAPP_SRC, "loginerror.jsp"))
             .addAsWebResource(new File(WEBAPP_SRC, "loginform.jsp"))
             .addAsWebInfResource(new File(WEBAPP_SRC + "/WEB-INF", "web.xml"))
-            .addAsWebInfResource(new File(WEBAPP_SRC + "/WEB-INF", "glassfish-web.xml"));
+            .addAsWebInfResource(new File(WEBAPP_SRC + "/WEB-INF", "payara-web.xml"));
     }
 
     @Before

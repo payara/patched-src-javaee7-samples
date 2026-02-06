@@ -40,10 +40,12 @@
  * holder.
  */
 -->
-<!DOCTYPE glassfish-web-app PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN" "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
-<glassfish-web-app error-url="">
+<!DOCTYPE payara-web-app PUBLIC "-//Payara.fish//DTD Payara Server 4 Servlet 3.0//EN" "https://docs.payara.fish/schemas/payara-web-app_4.dtd">
+<payara-web-app error-url="">
+
+    <!-- For GlassFish 5, Payara 5, and Payara 4.x this is no longer needed -->
     <security-role-mapping>
         <role-name>g1</role-name>
         <group-name>g1</group-name>
     </security-role-mapping>
-</glassfish-web-app>
+</payara-web-app>

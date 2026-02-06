@@ -164,7 +164,7 @@ public class SecureServletTest {
                 .addClasses(SecureServlet.class)
                 .addClasses(MyJCECertificateFactory.class, MyJCEX509Certificate.class)
                 .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "web.xml")))
-                .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "glassfish-web.xml")));
+                .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "payara-web.xml")));
     }
 
     @Before

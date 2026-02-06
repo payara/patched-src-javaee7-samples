@@ -128,7 +128,7 @@ public class SecureServletTest {
         return create(WebArchive.class)
                 .addClasses(SecureServlet.class)
                 .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "web.xml")))
-                .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "glassfish-web.xml")));
+                .addAsWebInfResource((new File(WEBAPP_SRC + "/WEB-INF", "payara-web.xml")));
     }
 
     @Before
