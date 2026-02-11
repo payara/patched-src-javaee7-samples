@@ -109,13 +109,6 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-
-        <!-- Temporal for Jakarta EE 10 development until the jar files are available on maven central -->
-        <repository>
-            <id>staged-jakarta-releases</id>
-            <url>https://jakarta.oss.sonatype.org/content/groups/staging/</url>
-        </repository>
-
     </repositories>
 
 
@@ -1896,24 +1889,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>jakarta-staging</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <repositories>
-                <repository>
-                    <id>jakarta-releases</id>
-                    <url>https://jakarta.oss.sonatype.org/content/groups/staging/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
         </profile>
     </profiles>
 
