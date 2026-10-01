@@ -52,7 +52,7 @@
             Application Server versions
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
-        <payara.version>7.2026.5-SNAPSHOT</payara.version>
+        <payara.version>7.2026.9</payara.version>
         <payara_domain>domain1</payara_domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
@@ -488,6 +488,11 @@
 
                 <!-- Client-cert needs complicated cert setup, which hasn't been done -->
                 <skipServletClientCertificate>true</skipServletClientCertificate>
+                <skipServletClientCertificateCommonName>true</skipServletClientCertificateCommonName>
+
+                <!-- Payara Micro jar: copied here by the dependency-plugin, located here by the tests -->
+                <payara.microJar.name>payara-micro-${payara.version}.jar</payara.microJar.name>
+                <payara.microJar>${session.executionRootDirectory}/target/${payara.microJar.name}</payara.microJar>
             </properties>
 
             <dependencies>
@@ -528,7 +533,7 @@
                                             <version>${payara.version}</version>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${session.executionRootDirectory}/target/</outputDirectory>
-                                            <destFileName>payara-micro-${payara.version}.jar</destFileName>
+                                            <destFileName>${payara.microJar.name}</destFileName>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
@@ -541,7 +546,10 @@
                         <configuration>
                             <systemProperties>
                                 <skipEAR>${skipEAR}</skipEAR>
-                                <payara.microJar>${session.executionRootDirectory}/target/payara-micro-${payara.version}.jar</payara.microJar>
+                                <payara.microJar>${payara.microJar}</payara.microJar>
+                                <payara.clusterEnabled>true</payara.clusterEnabled>
+                                <payara.cmdOptions>-Djava.net.preferIPv4Stack=true -Dhazelcast.max.join.seconds=10 -Dhazelcast.wait.seconds.before.join=0</payara.cmdOptions>
+                                <payara.extraMicroOptions>--clustername javaee7-samples-arquillian --interfaces 127.0.0.1</payara.extraMicroOptions>
                             </systemProperties>
                         </configuration>
                     </plugin>
