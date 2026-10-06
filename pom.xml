@@ -547,9 +547,6 @@
                             <systemProperties>
                                 <skipEAR>${skipEAR}</skipEAR>
                                 <payara.microJar>${payara.microJar}</payara.microJar>
-                                <payara.clusterEnabled>true</payara.clusterEnabled>
-                                <payara.cmdOptions>-Djava.net.preferIPv4Stack=true -Dhazelcast.max.join.seconds=10 -Dhazelcast.wait.seconds.before.join=0</payara.cmdOptions>
-                                <payara.extraMicroOptions>--clustername javaee7-samples-arquillian --interfaces 127.0.0.1</payara.extraMicroOptions>
                             </systemProperties>
                         </configuration>
                     </plugin>
