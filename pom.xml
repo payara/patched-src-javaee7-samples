@@ -491,8 +491,7 @@
                 <skipServletClientCertificateCommonName>true</skipServletClientCertificateCommonName>
 
                 <!-- Payara Micro jar: copied here by the dependency-plugin, located here by the tests -->
-                <payara.microJar.name>payara-micro-${payara.version}.jar</payara.microJar.name>
-                <payara.microJar>${session.executionRootDirectory}/target/${payara.microJar.name}</payara.microJar>
+                <payara.microJar>${session.executionRootDirectory}/target/payara-micro-${payara.version}.jar</payara.microJar>
             </properties>
 
             <dependencies>
@@ -533,7 +532,7 @@
                                             <version>${payara.version}</version>
                                             <overWrite>false</overWrite>
                                             <outputDirectory>${session.executionRootDirectory}/target/</outputDirectory>
-                                            <destFileName>${payara.microJar.name}</destFileName>
+                                            <destFileName>payara-micro-${payara.version}.jar</destFileName>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
