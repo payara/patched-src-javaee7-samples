@@ -52,7 +52,7 @@
             Application Server versions
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
-        <payara.version>7.2026.5-SNAPSHOT</payara.version>
+        <payara.version>7.2026.9</payara.version>
         <payara_domain>domain1</payara_domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
@@ -488,6 +488,10 @@
 
                 <!-- Client-cert needs complicated cert setup, which hasn't been done -->
                 <skipServletClientCertificate>true</skipServletClientCertificate>
+                <skipServletClientCertificateCommonName>true</skipServletClientCertificateCommonName>
+
+                <!-- Payara Micro jar: copied here by the dependency-plugin, located here by the tests -->
+                <payara.microJar>${session.executionRootDirectory}/target/payara-micro-${payara.version}.jar</payara.microJar>
             </properties>
 
             <dependencies>
@@ -541,7 +545,7 @@
                         <configuration>
                             <systemProperties>
                                 <skipEAR>${skipEAR}</skipEAR>
-                                <payara.microJar>${session.executionRootDirectory}/target/payara-micro-${payara.version}.jar</payara.microJar>
+                                <payara.microJar>${payara.microJar}</payara.microJar>
                             </systemProperties>
                         </configuration>
                     </plugin>
