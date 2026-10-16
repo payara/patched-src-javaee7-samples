@@ -572,9 +572,32 @@
              <properties>
                 <!-- Client-cert needs complicated cert setup, which hasn't been done -->
                 <skipServletClientCertificate>true</skipServletClientCertificate>
+                <!-- Fresh JVM per test class, as some samples share static state (e.g. batch/scheduling latches) -->
+                <reuseForks>false</reuseForks>
+                <!-- The embedded container doesn't apply an ear's context-root to @ArquillianResource URL -->
+                <skipEAR>true</skipEAR>
+                <!-- The embedded server runs in the test JVM, so it needs these packages opened.
+                     otel.sdk.disabled=false creates the runtime OpenTelemetry SDK; without it, Payara's managed executors
+                     throw "No application code is executing" when the in-JVM Tyrus client schedules its idle timeout,
+                     and the WebSocket handshake never completes -->
+                <argLine>-Dotel.sdk.disabled=false --add-opens=java.base/jdk.internal.misc=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED --add-opens=java.naming/javax.naming.spi=ALL-UNNAMED</argLine>
             </properties>
 
             <dependencies>
+                <!-- Merges with the root declaration. payara-embedded-all bundles its own Faces implementation
+                     and API, and the standalone API jar clashes with it (NoSuchMethodError at render time) -->
+                <dependency>
+                    <groupId>jakarta.platform</groupId>
+                    <artifactId>jakarta.jakartaee-api</artifactId>
+                    <scope>provided</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>jakarta.faces</groupId>
+                            <artifactId>jakarta.faces-api</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
                 <!-- Java EE based client dependencies to contact a server via WebSocket or REST -->
                 <dependency>
                     <groupId>fish.payara.arquillian</groupId>
@@ -602,6 +625,49 @@
                     <version>1.0.0.Final</version>
                     <scope>test</scope>
                     <optional>true</optional>
+                    <exclusions>
+                        <!-- javax.* enrichers, replaced by the -jakarta ones below -->
+                        <exclusion>
+                            <groupId>org.jboss.arquillian.testenricher</groupId>
+                            <artifactId>arquillian-testenricher-cdi</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.jboss.arquillian.testenricher</groupId>
+                            <artifactId>arquillian-testenricher-ejb</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.jboss.arquillian.testenricher</groupId>
+                            <artifactId>arquillian-testenricher-resource</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+                <!-- Provides the "Servlet 5.0" protocol named in arquillian.xml -->
+                <dependency>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+                    <version>10.0.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+
+                <!-- Jakarta test enrichers, so @Inject, @EJB, @Resource and @PersistenceContext are injected into tests -->
+                <dependency>
+                    <groupId>org.jboss.arquillian.testenricher</groupId>
+                    <artifactId>arquillian-testenricher-cdi-jakarta</artifactId>
+                    <version>10.0.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.testenricher</groupId>
+                    <artifactId>arquillian-testenricher-ejb-jakarta</artifactId>
+                    <version>10.0.0.Final</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.testenricher</groupId>
+                    <artifactId>arquillian-testenricher-resource-jakarta</artifactId>
+                    <version>10.0.0.Final</version>
+                    <scope>test</scope>
                 </dependency>
             </dependencies>
             <build>
@@ -615,6 +681,21 @@
                         <filtering>true</filtering>
                     </testResource>
                 </testResources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- payara-embedded-all bundles its own Faces API; a second copy (e.g. from the jsf parent) clashes with it -->
+                            <classpathDependencyExcludes>
+                                <classpathDependencyExclude>jakarta.faces:jakarta.faces-api</classpathDependencyExclude>
+                            </classpathDependencyExcludes>
+                            <systemPropertyVariables>
+                                <skipEAR>${skipEAR}</skipEAR>
+                                <javaEEServer>payara-embedded</javaEEServer>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
 

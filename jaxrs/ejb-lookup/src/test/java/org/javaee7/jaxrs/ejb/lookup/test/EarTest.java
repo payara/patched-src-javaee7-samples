@@ -3,6 +3,7 @@ package org.javaee7.jaxrs.ejb.lookup.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
 
 import java.net.URL;
 
@@ -182,6 +183,9 @@ public class EarTest {
      */
     @Test
     public void testSameBeanNames() throws Exception {
+        // Relies on per-war context roots, which the embedded container doesn't apply to EAR deployments
+        assumeFalse(Boolean.getBoolean("skipEAR"));
+
         final WebTarget t1 = this.targetBase.path("/same-bean-name-1/same-bean-name-app/same-bean-name-bean/ok");
         final String responseT1 = t1.request(MediaType.APPLICATION_JSON).get(String.class);
         assertEquals("responseT1", "OK1", responseT1);

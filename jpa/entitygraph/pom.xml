@@ -11,4 +11,47 @@
     <artifactId>jpa-entitygraph</artifactId>
     <packaging>war</packaging>
     <name>Java EE 7 Sample: jpa - entitygraph</name>
+
+    <dependencies>
+        <!-- Used by EclipseLink's static weaver; payara-embedded-all doesn't bundle it -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>9.9.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Entity graphs need EclipseLink fetch groups, which need weaved entities. The embedded server runs in the
+                     test JVM without a weaving agent, so weave the classes statically -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>static-weave</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <classpathScope>test</classpathScope>
+                            <mainClass>org.eclipse.persistence.tools.weaving.jpa.StaticWeave</mainClass>
+                            <arguments>
+                                <argument>-persistenceinfo</argument>
+                                <argument>${project.build.outputDirectory}</argument>
+                                <argument>-classpath</argument>
+                                <argument>${project.build.outputDirectory}</argument>
+                                <argument>${project.build.outputDirectory}</argument>
+                                <argument>${project.build.outputDirectory}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
