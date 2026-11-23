@@ -6,6 +6,10 @@
         <artifactId>servlet</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
+    <properties>
+        <skipPayaraDomainSetup>${skipTests}</skipPayaraDomainSetup>
+    </properties>
     
     <artifactId>servlet-security-basicauth</artifactId>
     <packaging>war</packaging>
