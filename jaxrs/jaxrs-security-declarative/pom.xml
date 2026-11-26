@@ -7,6 +7,10 @@
         <artifactId>jaxrs</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
+    <properties>
+        <skipPayaraDomainSetup>${skipTests}</skipPayaraDomainSetup>
+    </properties>
     
     <artifactId>jaxrs-jaxrs-security-declarative</artifactId>
     <packaging>war</packaging>

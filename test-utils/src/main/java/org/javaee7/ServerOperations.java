@@ -56,6 +56,8 @@ public class ServerOperations {
             cmd.add("u1");
 
             CliCommands.payaraGlassFish(cmd);
+        } else if ("payara-embedded".equals(javaEEServer)) {
+            addUserToEmbeddedFileRealm("u1", "p1", "g1");
         } else {
             if (javaEEServer == null) {
                 System.out.println("javaEEServer not specified");
@@ -69,33 +71,53 @@ public class ServerOperations {
         // WildFly ./bin/add-user.sh -a -u u1 -p p1 -g g1
     }
 
+    /**
+     * The embedded server runs in the test JVM, so the file realm can be called directly. Reflection is used
+     * as the embedded server is not a dependency of this module.
+     */
+    private static void addUserToEmbeddedFileRealm(String user, String password, String group) {
+        try {
+            Object realm = Class.forName("com.sun.enterprise.security.auth.realm.Realm")
+                                .getMethod("getInstance", String.class)
+                                .invoke(null, "file");
+
+            realm.getClass()
+                 .getMethod("addUser", String.class, char[].class, String[].class)
+                 .invoke(realm, user, password.toCharArray(), new String[] { group });
+
+            realm.getClass().getMethod("persist").invoke(realm);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not add user to embedded file realm", e);
+        }
+    }
+
     public static void addCertificateToContainerTrustStore(Certificate clientCertificate) {
 
         String javaEEServer = System.getProperty("javaEEServer");
 
         if ("glassfish-remote".equals(javaEEServer) || "payara-remote".equals(javaEEServer)) {
 
-            String gfHome = System.getProperty("com.sun.aas.productRoot");
+            String gfHome = System.getProperty("payara.home");
             if (gfHome == null) {
-                logger.info("glassfishRemote_gfHome not specified");
+                logger.info("payara.home not specified");
                 return;
             }
 
             Path gfHomePath = Paths.get(gfHome);
             if (!gfHomePath.toFile().exists()) {
-                logger.severe("glassfishRemote_gfHome at " + gfHome + " does not exists");
+                logger.severe("payara.home at " + gfHome + " does not exists");
                 return;
             }
 
             if (!gfHomePath.toFile().isDirectory()) {
-                logger.severe("glassfishRemote_gfHome at " + gfHome + " is not a directory");
+                logger.severe("payara.home at " + gfHome + " is not a directory");
                 return;
             }
 
-            String domain = System.getProperty("payara_domain", "domain1");
-            if (domain != null) {
+            String domain = System.getProperty("payara.domain");
+            if (domain == null) {
                 domain = getPayaraDomainFromServer();
-                logger.info("Using domain \"" + domain + "\" obtained from server. If this is not correct use -Dpayara_domain to override.");
+                logger.info("Using domain \"" + domain + "\" obtained from server. If this is not correct use -Dpayara.domain to override.");
             }
 
             Path cacertsPath = gfHomePath.resolve("glassfish/domains/" + domain + "/config/cacerts.p12");
@@ -194,7 +216,7 @@ public class ServerOperations {
         }
 
         if (domain == null) {
-            throw new IllegalStateException("Running domain could not be obtained for target Payara. Please specify explicitly using -Dpayara_domain");
+            throw new IllegalStateException("Running domain could not be obtained for target Payara. Please specify explicitly using -Dpayara.domain");
         }
 
         return domain;
@@ -242,7 +264,7 @@ public class ServerOperations {
 
             String restartDomain = domain;
             if (restartDomain == null) {
-                restartDomain = System.getProperty("payara_domain");
+                restartDomain = System.getProperty("payara.domain");
             }
 
             if (restartDomain == null) {

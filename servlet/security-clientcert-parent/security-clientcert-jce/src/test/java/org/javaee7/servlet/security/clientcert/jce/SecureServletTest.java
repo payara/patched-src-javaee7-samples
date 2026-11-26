@@ -142,7 +142,7 @@ public class SecureServletTest {
 
         // Add the client certificate that we just generated to the trust store of the server.
         // That way the server will trust our certificate.
-        // Set the actual domain used with -Dpayara_domain=[domain name] 
+        // Set the actual domain used with -Dpayara.domain=[domain name] 
         addCertificateToContainerTrustStore(clientCertificate);
 
         // Also add the server's certificate to the client's trust store
