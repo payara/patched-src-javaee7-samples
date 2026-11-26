@@ -157,5 +157,50 @@
         <scope>provided</scope> 
       </dependency>
 			</dependencies>
-    
+
+    <profiles>
+        <profile>
+            <id>payara-server-embedded</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- The provided Grizzly dependencies above are an older version than the Grizzly bundled in
+                                 payara-embedded-all, and break the startup of the embedded server -->
+                            <classpathDependencyExcludes combine.children="append">
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-framework</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-server</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-servlet</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-portunif</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-ajp</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-websockets</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http2</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-comet</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-server-multipart</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-server-jaxws</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-servlet-extras</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:tls-sni</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly.osgi:grizzly-httpservice</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-framework-monitoring</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-monitoring</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-server-monitoring</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-core</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-server-core</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-all</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-http-servlet-server</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-websockets-server</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly:grizzly-comet-server</classpathDependencyExclude>
+                                <classpathDependencyExclude>org.glassfish.grizzly.osgi:grizzly-httpservice-bundle</classpathDependencyExclude>
+                                <!-- pulled in by the Grizzly monitoring artifacts, and older than the one in payara-embedded-all -->
+                                <classpathDependencyExclude>org.glassfish.external:management-api</classpathDependencyExclude>
+                            </classpathDependencyExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

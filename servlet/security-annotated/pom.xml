@@ -7,6 +7,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <skipPayaraDomainSetup>${skipTests}</skipPayaraDomainSetup>
+    </properties>
+
     <artifactId>security-annotated</artifactId>
     <packaging>war</packaging>
     

@@ -17,6 +17,12 @@
 
         <maven.test.skip>false</maven.test.skip>
         <skipTests>false</skipTests>
+        <!-- Set to ${skipTests} by modules that need the test user and realm in the payara-server-managed domain -->
+        <skipPayaraDomainSetup>true</skipPayaraDomainSetup>
+
+        <!-- Payara artifacts resolved by the payara-server-managed and payara-server-embedded profiles; the web profile switches them to the Web Profile variants -->
+        <payara.artifact>payara</payara.artifact>
+        <payara.embedded.artifact>payara-embedded-all</payara.embedded.artifact>
 
         <!-- Module Skip Properties -->
         <skipBatch>${skipTests}</skipBatch>
@@ -50,7 +56,7 @@
             (these are downloaded and installed in these versions by Maven for the CI profiles)
          -->
         <payara.version>5.2022.5</payara.version>
-        <payara_domain>domain1</payara_domain>
+        <payara.domain>domain1</payara.domain>
         <glassfish.client.version>5.0</glassfish.client.version> <!-- For remote EJB for Payara and Glassfish -->
         <glassfish.version>4.1.1</glassfish.version>
         <liberty.version>16.0.0.4</liberty.version>
@@ -60,6 +66,9 @@
         <tomcat.version>9.0.4</tomcat.version>
 
         <payara.arquillian.version>2.4.6</payara.arquillian.version>
+
+        <payara-nexus-staging.repo.releases.enabled>false</payara-nexus-staging.repo.releases.enabled>
+        <payara-nexus-staging.repo.snapshots.enabled>false</payara-nexus-staging.repo.snapshots.enabled>
     </properties>
 
     <prerequisites>
@@ -67,6 +76,7 @@
     </prerequisites>
 
     <repositories>
+        <!-- Try Maven central first, not last, which happens when omitted here -->
         <repository>
             <id>central</id>
             <name>Central Repository</name>
@@ -94,8 +104,135 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>ossrh-snapshots</id>
+            <name>Sonatype OSSRH Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>payara-nexus-artifacts</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-artifacts</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>payara-nexus-enterprise-artifacts</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-enterprise-artifacts-private</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>payara-nexus-enterprise-distributions</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-enterprise</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>payara-nexus-enterprise-snapshots</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-enterprise-snapshots-private</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>payara-nexus-snapshots</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>payara-nexus-staging</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-staging</url>
+            <releases>
+                <enabled>${payara-nexus-staging.repo.releases.enabled}</enabled>
+            </releases>
+            <snapshots>
+                <enabled>${payara-nexus-staging.repo.snapshots.enabled}</enabled>
+            </snapshots>
+        </repository>
 
     </repositories>
+
+    <pluginRepositories>
+        <!-- Try Maven central first, not last, which happens when omitted here -->
+        <pluginRepository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>ossrh-snapshots</id>
+            <name>Sonatype OSSRH Snapshot Repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>payara-nexus-artifacts</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-artifacts</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>payara-nexus-snapshots</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>payara-nexus-staging</id>
+            <url>https://nexus.dev.payara.fish/repository/payara-staging</url>
+            <releases>
+                <enabled>${payara-nexus-staging.repo.releases.enabled}</enabled>
+            </releases>
+            <snapshots>
+                <enabled>${payara-nexus-staging.repo.snapshots.enabled}</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 
     <!-- The Java EE 7 specs that this project is providing samples for.
@@ -385,6 +522,17 @@
 
 
     <profiles>
+        <!-- Resolve the Payara Web Profile artifacts (payara-web, payara-embedded-web) instead of the full ones.
+             Combine with a server profile, e.g. -Pweb,payara-server-managed or -Pweb,payara-server-embedded.
+             Note that explicitly activating any profile deactivates the activeByDefault payara-server-managed profile -->
+        <profile>
+            <id>web</id>
+            <properties>
+                <payara.artifact>payara-web</payara.artifact>
+                <payara.embedded.artifact>payara-embedded-web</payara.embedded.artifact>
+            </properties>
+        </profile>
+
 
         <!-- ###  PAYARA  ### -->
         <profile>
@@ -424,16 +572,16 @@
                                     <goal>unpack</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${session.executionRootDirectory}/target</outputDirectory>
-                                    <markersDirectory>${session.executionRootDirectory}/target/dependency-maven-plugin-markers</markersDirectory>
+                                    <outputDirectory>${maven.multiModuleProjectDirectory}/target</outputDirectory>
+                                    <markersDirectory>${maven.multiModuleProjectDirectory}/target/dependency-maven-plugin-markers</markersDirectory>
                                     <artifactItems>
                                         <artifactItem>
                                             <groupId>fish.payara.distributions</groupId>
-                                            <artifactId>payara</artifactId>
+                                            <artifactId>${payara.artifact}</artifactId>
                                             <version>${payara.version}</version>
                                             <type>zip</type>
                                             <overWrite>false</overWrite>
-                                            <outputDirectory>${session.executionRootDirectory}/target</outputDirectory>
+                                            <outputDirectory>${maven.multiModuleProjectDirectory}/target</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
@@ -441,13 +589,99 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <configuration>
+                            <skip>${skipPayaraDomainSetup}</skip>
+                            <executable>${maven.multiModuleProjectDirectory}/target/payara5/bin/asadmin</executable>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>payara-start-domain</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>start-domain</argument>
+                                        <argument>${payara.domain}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>payara-create-file-user</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>create-file-user</argument>
+                                        <argument>--groups</argument>
+                                        <argument>g1</argument>
+                                        <argument>--passwordfile</argument>
+                                        <argument>${maven.multiModuleProjectDirectory}/test-utils/src/main/payara/user-password.txt</argument>
+                                        <argument>u1</argument>
+                                    </arguments>
+                                    <successCodes>
+                                        <successCode>0</successCode>
+                                        <successCode>1</successCode>
+                                    </successCodes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>payara-create-auth-realm</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>create-auth-realm</argument>
+                                        <argument>--classname</argument>
+                                        <argument>com.sun.enterprise.security.auth.realm.jdbc.JDBCRealm</argument>
+                                        <argument>--property</argument>
+                                        <argument>jaas-context=jdbcDigestRealm:encoding=HASHED:password-column=password:datasource-jndi=java\:comp/DefaultDataSource:group-table=grouptable:charset=UTF-8:user-table=usertable:group-name-column=groupname:digest-algorithm=None:user-name-column=username</argument>
+                                        <argument>eesamplesdigestrealm</argument>
+                                    </arguments>
+                                    <successCodes>
+                                        <successCode>0</successCode>
+                                        <successCode>1</successCode>
+                                    </successCodes>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>payara-stop-domain</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>
+                                        <argument>stop-domain</argument>
+                                        <argument>${payara.domain}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Run the tests after the domain is configured in pre-integration-test -->
+                                <id>default-test</id>
+                                <phase>integration-test</phase>
+                            </execution>
+                        </executions>
                         <configuration>
                             <systemPropertyVariables>
-                                <payara.home>${session.executionRootDirectory}/target/payara5</payara.home>
+                                <payara.home>${maven.multiModuleProjectDirectory}/target/payara5</payara.home>
                                 <arquillian.launch>payara5</arquillian.launch>
-                                <payara_domain>${payara_domain}</payara_domain>
+                                <payara.domain>${payara.domain}</payara.domain>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -554,6 +788,8 @@
              <properties>
                 <!-- Client-cert needs complicated cert setup, which hasn't been done -->
                 <skipServletClientCertificate>true</skipServletClientCertificate>
+                <!-- Fresh JVM per test class, as some samples share static state (e.g. batch/scheduling latches) -->
+                <reuseForks>false</reuseForks>
             </properties>
 
             <dependencies>
@@ -566,12 +802,43 @@
                             <groupId>org.glassfish.grizzly</groupId>
                             <artifactId>grizzly-http-server</artifactId>
                         </exclusion>
+                        <exclusion>
+                            <!-- payara-embedded-all bundles a newer Grizzly; this older copy breaks the server startup -->
+                            <groupId>org.glassfish.grizzly</groupId>
+                            <artifactId>grizzly-framework</artifactId>
+                        </exclusion>
+                        <!-- payara-embedded-all bundles its own Jersey; a second, older copy breaks JAX-RS applications
+                             (e.g. ArrayIndexOutOfBoundsException in ExternalRequestScopeConfigurator) -->
+                        <exclusion>
+                            <groupId>org.glassfish.jersey.core</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.glassfish.jersey.inject</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.glassfish.jersey.media</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.glassfish.jersey.ext</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.glassfish.jersey.ext.cdi</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.glassfish.jersey.ext.microprofile</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
                     </exclusions>
                 </dependency>
 
                 <dependency>
                     <groupId>fish.payara.extras</groupId>
-                    <artifactId>payara-embedded-all</artifactId>
+                    <artifactId>${payara.embedded.artifact}</artifactId>
                     <version>${payara.version}</version>
                     <scope>provided</scope>
                     <optional>true</optional>
@@ -596,6 +863,24 @@
                         <filtering>true</filtering>
                     </testResource>
                 </testResources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- payara-embedded-all bundles the Java EE APIs; the older javaee-api jar would shadow them
+                                 (e.g. Bean Validation 1.1 instead of 2.0) -->
+                            <classpathDependencyExcludes>
+                                <classpathDependencyExclude>javax:javaee-api</classpathDependencyExclude>
+                                <!-- likewise for the ancient Servlet 2.3 API pulled in by some test dependencies -->
+                                <classpathDependencyExclude>javax.servlet:servlet-api</classpathDependencyExclude>
+                            </classpathDependencyExcludes>
+                            <systemPropertyVariables>
+                                <skipEAR>${skipEAR}</skipEAR>
+                                <javaEEServer>payara-embedded</javaEEServer>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
 
@@ -625,7 +910,7 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <javaEEServer>payara-remote</javaEEServer>
-                                <payara_domain>${payara_domain}</payara_domain>
+                                <payara.domain>${payara.domain}</payara.domain>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -1871,6 +2156,14 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <profile>
+            <id>payara-nexus-staging</id>
+            <properties>
+                <payara-nexus-staging.repo.releases.enabled>true</payara-nexus-staging.repo.releases.enabled>
+                <payara-nexus-staging.repo.snapshots.enabled>true</payara-nexus-staging.repo.snapshots.enabled>
+            </properties>
         </profile>
     </profiles>
 

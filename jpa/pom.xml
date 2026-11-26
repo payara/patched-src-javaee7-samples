@@ -47,6 +47,14 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- The JPA metamodel classes (*_) are committed. The EclipseLink processor bundled in payara-embedded-all
+                         would regenerate them and fail with "Attempt to recreate a file" -->
+                    <proc>none</proc>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>${skipJPA}</skipTests>

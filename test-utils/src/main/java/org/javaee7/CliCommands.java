@@ -28,20 +28,20 @@ public class CliCommands {
 
     public static int payaraGlassFish(List<String> cliCommands, List<String> output) {
 
-        String gfHome = System.getProperty("com.sun.aas.productRoot");
+        String gfHome = System.getProperty("payara.home");
         if (gfHome == null) {
-            logger.info("glassfishRemote_gfHome not specified");
+            logger.info("payara.home not specified");
             return -1;
         }
 
         Path gfHomePath = Paths.get(gfHome);
         if (!gfHomePath.toFile().exists()) {
-            logger.severe("glassfishRemote_gfHome at " + gfHome + " does not exists");
+            logger.severe("payara.home at " + gfHome + " does not exists");
             return -1;
         }
 
         if (!gfHomePath.toFile().isDirectory()) {
-            logger.severe("glassfishRemote_gfHome at " + gfHome + " is not a directory");
+            logger.severe("payara.home at " + gfHome + " is not a directory");
             return -1;
         }
 
